@@ -1,15 +1,11 @@
 {application, erlbbs,
- [{description, "An OTP application"},
+ [{description, "BBS made with erlang"},
   {vsn, "0.1.0"},
   {registered, []},
   {mod, {erlbbs_app, []}},
-  {applications,
-   [kernel,
-    stdlib
-   ]},
+  {applications, [kernel, stdlib, cowboy, erlydtl, sasl]},
   {env,[]},
   {modules, []},
-
   {licenses, ["Apache 2.0"]},
   {links, []}
  ]}.
