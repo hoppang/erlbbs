@@ -15,7 +15,8 @@ start(_StartType, _StartArgs) ->
     ListeningPort = 60000,
 
     %% http server 설정
-    {ok, _Pid} = cowboy:start_clear(http, [{port, ListeningPort}], #{env => #{dispatch => Dispatch}}),
+    {ok, _Pid} =
+        cowboy:start_clear(http, [{port, ListeningPort}], #{env => #{dispatch => Dispatch}}),
 
     erlbbs_sup:start_link().
 
