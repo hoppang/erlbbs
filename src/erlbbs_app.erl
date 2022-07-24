@@ -9,7 +9,11 @@
 
 -export([start/2, stop/1]).
 
+-include_lib("kernel/include/logger.hrl").
+
 start(_StartType, _StartArgs) ->
+    ?LOG_NOTICE("Start application"),
+
     %% cowboy router 설정
     Dispatch = cowboy_router:compile([{'_', [{"/", index_controller, []}]}]),
     ListeningPort = 60000,
