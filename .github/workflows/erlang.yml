@@ -16,7 +16,7 @@ jobs:
     runs-on: self-hosted
 
     container:
-      image: erlang:22.0.7
+      image: erlang:latest
 
     steps:
     - uses: actions/checkout@v3
