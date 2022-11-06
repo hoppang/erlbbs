@@ -17,7 +17,10 @@ start_link() ->
 init([]) ->
     ?LOG_DEBUG("riak_process init"),
 
-    case riakc_pb_socket:start_link("10.0.0.2", 49154) of
+    {ok, DbAddr} = application:get_env(db, address),
+    {ok, DbPort} = application:get_env(db, port),
+
+    case riakc_pb_socket:start_link(DbAddr, DbPort) of
         {ok, Pid} ->
             ?LOG_NOTICE("Successfully connected to DB."),
             {ok, #state{pid = Pid}};
