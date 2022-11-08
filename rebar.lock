@@ -17,8 +17,8 @@
        {ref,"04e8cc7daa081c23be137b1eff2a6a3fb827f8e4"}},
   1},
  {<<"riakc">>,
-  {git,"https://github.com/basho/riak-erlang-client.git",
-       {ref,"467deeb1eee6830a6945249bc9745900766d77c0"}},
+  {git,"https://github.com/hoppang/riak-erlang-client.git",
+       {ref,"8f084d842864477c9674c003db537b88841f11a9"}},
   0}]}.
 [
 {pkg_hash,[
