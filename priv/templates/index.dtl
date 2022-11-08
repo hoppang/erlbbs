@@ -4,8 +4,8 @@
   </head>
   <body>
     <form action="/register" method="post">
-      ID: <input type="text" id="register_id" required></input>
-      PW: <input type="password" id="register_pw" required></input>
+      ID: <input type="text" name="register_id" required></input>
+      PW: <input type="password" name="register_pw" required></input>
       <input type="submit"></input>
     </form>
 
