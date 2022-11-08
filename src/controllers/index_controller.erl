@@ -7,8 +7,14 @@
 -spec init(cowboy_req:req(), list()) -> {ok, cowboy_req:req(), list()}.
 init(Req0, State) ->
     ?LOG_INFO("INDEX INIT ~p", State),
-    {ok, Body} = index_view:render([]),
+
+    % 유저 ID 목록 출력(그냥 보여주기용)
+    Users = riak_process:get_all_users(),
+    UsersWithDelim = lists:map(fun(X) -> <<X/binary, <<" ">>/binary>> end, Users),
+
+    {ok, Body} = index_view:render([{users, list_to_binary(UsersWithDelim)}]),
     Req1 = cowboy_req:reply(200, #{<<"content-type">> => <<"text/html">>}, Body, Req0),
+
     {ok, Req1, State}.
 
 -spec terminate(atom(), cowboy_req:req(), list()) -> ok.

@@ -10,6 +10,6 @@
     </form>
 
     ID List:
-    <div id="id_list"></div>
+    {{ users }}
   </body>
 </html>

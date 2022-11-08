@@ -7,6 +7,8 @@
 -export([start_link/0]).
 % gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2]).
+% 인터페이스
+-export([add_user/2, get_all_users/0]).
 
 -record(state, {pid}).
 
@@ -15,7 +17,7 @@ start_link() ->
     gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
 
 init([]) ->
-    ?LOG_DEBUG("riak_process init"),
+    ?LOG_NOTICE("riak_process init"),
 
     {ok, DbAddr} = application:get_env(db, address),
     {ok, DbPort} = application:get_env(db, port),
@@ -26,14 +28,27 @@ init([]) ->
             {ok, #state{pid = Pid}};
         {error, {tcp, econnrefused}} ->
             ?LOG_ERROR("Failed to init Riak DB: connection refused"),
-            %{stop, econnrefused};
             ignore;
         Err ->
             ?LOG_ERROR("Failed to init Riak DB: unknown error ~p", [Err]),
-            %{stop, unknownerror}
             ignore
     end.
 
+%% ================================================================================
+%% 인터페이스 함수
+
+-spec add_user(binary(), binary()) -> ok.
+add_user(Id, Pw) ->
+    gen_server:cast(riak_process, {new, <<"Users">>, Id, Pw}),
+    ok.
+
+-spec get_all_users() -> [binary()].
+get_all_users() ->
+    gen_server:call(riak_process, {read_all, <<"Users">>}).
+
+%% ================================================================================
+
+%% 버킷에서 항목 하나 읽기
 handle_call({read, Bucket, Key}, _From, State) ->
     ?LOG_NOTICE("read obj", []),
     {state, Pid} = State,
@@ -47,14 +62,29 @@ handle_call({read, Bucket, Key}, _From, State) ->
         Err ->
             ?LOG_ERROR("No entry: ~p", [Err]),
             {reply, "", State}
+    end;
+%% 버킷에 해당하는 항목 전부 읽기
+handle_call({read_all, Bucket}, _From, State) ->
+    ?LOG_NOTICE("read all keys from bucket ~p", [Bucket]),
+    {state, Pid} = State,
+
+    case riakc_pb_socket:list_keys(Pid, Bucket) of
+        {ok, Result} ->
+            ?LOG_NOTICE("read_all result: ~p~n", [Result]),
+            {reply, Result, State};
+        Err ->
+            ?LOG_ERROR("No keys: ~p", [Err]),
+            {reply, nil, State}
     end.
 
+%% 버킷에 새 키/값 추가
 handle_cast({new, Bucket, Key, Value}, State) ->
     ?LOG_NOTICE("new obj"),
     {state, Pid} = State,
     NewObj = riakc_obj:new(Bucket, Key, Value),
     riakc_pb_socket:put(Pid, NewObj),
     {noreply, State};
+%% 버킷에 있는 키의 값 업데이트
 handle_cast({update, Bucket, Key, NewValue}, State) ->
     % 항목 업데이트
     ?LOG_NOTICE("update obj ~p ~p ~p", [Bucket, Key, NewValue]),
@@ -64,6 +94,7 @@ handle_cast({update, Bucket, Key, NewValue}, State) ->
     ?LOG_DEBUG("Updated obj = ~p", [UpdatedObj]),
     ok = riakc_pb_socket:put(Pid, UpdatedObj),
     {noreply, State};
+%% 처리되지 않은 메시지
 handle_cast(AnyMsg, State) ->
     ?LOG_DEBUG("handle_cast ~p", [AnyMsg]),
     {noreply, State}.
