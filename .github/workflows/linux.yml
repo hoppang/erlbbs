@@ -1,0 +1,26 @@
+# self-host linux 용
+
+name: erlbbs CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: [self-hosted, linux]
+
+    container:
+      image: erlang:latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Dialyzer
+      run: rebar3 dialyzer
+    - name: Run tests
+      run: rebar3 do eunit, ct
