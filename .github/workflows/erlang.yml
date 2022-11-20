@@ -11,10 +11,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
-    container:
-      image: erlang:latest
+    runs-on: self-hosted
 
     steps:
     - uses: actions/checkout@v3
