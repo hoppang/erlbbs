@@ -4,7 +4,7 @@
 
 -behaviour(gen_server).
 
--export([start_link/0]).
+-export([start_link/2]).
 % gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2]).
 % 인터페이스
@@ -12,17 +12,14 @@
 
 -record(state, {pid}).
 
-start_link() ->
-    ?LOG_DEBUG("riak_process start_link"),
-    gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
+start_link(Addr, Port) ->
+    ?LOG_DEBUG("riak_process start_link ~p ~p", [Addr, Port]),
+    gen_server:start_link({local, ?MODULE}, ?MODULE, [Addr, Port], []).
 
-init([]) ->
-    ?LOG_NOTICE("riak_process init"),
+init([Addr, Port]) ->
+    ?LOG_NOTICE("riak_process init ~p ~p", [Addr, Port]),
 
-    {ok, DbAddr} = application:get_env(db, address),
-    {ok, DbPort} = application:get_env(db, port),
-
-    case riakc_pb_socket:start_link(DbAddr, DbPort) of
+    case riakc_pb_socket:start_link(Addr, Port) of
         {ok, Pid} ->
             ?LOG_NOTICE("Successfully connected to DB."),
             {ok, #state{pid = Pid}};

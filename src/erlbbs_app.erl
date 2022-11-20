@@ -21,7 +21,10 @@ start(_StartType, _StartArgs) ->
                                  {"/register", register_controller, []}]}]),
     ListeningPort = 60000,
 
-    riak_process:start_link(),
+    {ok, DbAddr} = application:get_env(db, address),
+    {ok, DbPort} = application:get_env(db, port),
+
+    riak_process:start_link(DbAddr, DbPort),
 
     % 그냥 db 접근 코드 예제..
     Bucket = <<"Foods">>,
@@ -36,6 +39,8 @@ start(_StartType, _StartArgs) ->
     %% http server 설정
     {ok, _Pid} =
         cowboy:start_clear(http, [{port, ListeningPort}], #{env => #{dispatch => Dispatch}}),
+
+    ?LOG_NOTICE("Init OK: Now you can access index page via http://127.0.0.1:~p", [ListeningPort]),
 
     erlbbs_sup:start_link().
 
