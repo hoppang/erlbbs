@@ -2,12 +2,21 @@
 
 -export([init/2, terminate/3]).
 
--spec init(cowboy_req:req(), map()) -> {ok, cowboy_req:req(), map()}.
+-include_lib("kernel/include/logger.hrl").
+
+-spec init(cowboy_req:req(), list()) -> {ok, cowboy_req:req(), list()}.
 init(Req0, State) ->
-    {ok, Body} = index_view:render([]),
+    ?LOG_INFO("INDEX INIT ~p", State),
+
+    % 유저 ID 목록 출력(그냥 보여주기용)
+    Users = riak_process:get_all_users(),
+    UsersWithDelim = lists:map(fun(X) -> <<X/binary, <<" ">>/binary>> end, Users),
+
+    {ok, Body} = index_view:render([{users, list_to_binary(UsersWithDelim)}]),
     Req1 = cowboy_req:reply(200, #{<<"content-type">> => <<"text/html">>}, Body, Req0),
+
     {ok, Req1, State}.
 
--spec terminate(any(), any(), any()) -> ok.
+-spec terminate(atom(), cowboy_req:req(), list()) -> ok.
 terminate(_Reason, _Req, _State) ->
     ok.
