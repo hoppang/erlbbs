@@ -50,14 +50,14 @@ get_all_users() ->
 
 %% 버킷에서 항목 하나 읽기
 handle_call({read, Bucket, Key}, _From, State) ->
-    ?LOG_NOTICE("read obj", []),
+    ?LOG_DEBUG("read obj", []),
     {state, Pid} = State,
 
     % 항목 읽기
     case riakc_pb_socket:get(Pid, Bucket, Key) of
         {ok, Result} ->
             [Val] = riakc_obj:get_values(Result),
-            ?LOG_NOTICE("riakc get_values = ~p", [Val]),
+            ?LOG_DEBUG("riakc get_values = ~p", [Val]),
             {reply, Val, State};
         Err ->
             ?LOG_ERROR("No entry: ~p", [Err]),
@@ -65,12 +65,12 @@ handle_call({read, Bucket, Key}, _From, State) ->
     end;
 %% 버킷에 해당하는 항목 전부 읽기
 handle_call({read_all, Bucket}, _From, State) ->
-    ?LOG_NOTICE("read all keys from bucket ~p", [Bucket]),
+    ?LOG_DEBUG("read all keys from bucket ~p", [Bucket]),
     {state, Pid} = State,
 
     case riakc_pb_socket:list_keys(Pid, Bucket) of
         {ok, Result} ->
-            ?LOG_NOTICE("read_all result: ~p~n", [Result]),
+            ?LOG_DEBUG("read_all result: ~p~n", [Result]),
             {reply, Result, State};
         Err ->
             ?LOG_ERROR("No keys: ~p", [Err]),
@@ -79,7 +79,7 @@ handle_call({read_all, Bucket}, _From, State) ->
 
 %% 버킷에 새 키/값 추가
 handle_cast({new, Bucket, Key, Value}, State) ->
-    ?LOG_NOTICE("new obj"),
+    ?LOG_DEBUG("new obj"),
     {state, Pid} = State,
     NewObj = riakc_obj:new(Bucket, Key, Value),
     riakc_pb_socket:put(Pid, NewObj),
@@ -87,7 +87,7 @@ handle_cast({new, Bucket, Key, Value}, State) ->
 %% 버킷에 있는 키의 값 업데이트
 handle_cast({update, Bucket, Key, NewValue}, State) ->
     % 항목 업데이트
-    ?LOG_NOTICE("update obj ~p ~p ~p", [Bucket, Key, NewValue]),
+    ?LOG_DEBUG("update obj ~p ~p ~p", [Bucket, Key, NewValue]),
     {state, Pid} = State,
     {ok, Obj} = riakc_pb_socket:get(Pid, Bucket, Key),
     UpdatedObj = riakc_obj:update_value(Obj, NewValue),

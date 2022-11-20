@@ -28,10 +28,10 @@ start(_StartType, _StartArgs) ->
     Key = <<"Korean">>,
     gen_server:cast(riak_process, {new, Bucket, Key, <<"Kimchi">>}),
     Obj = gen_server:call(riak_process, {read, Bucket, Key}),
-    ?LOG_NOTICE("OBJ = ~p~n", [Obj]),
+    %?LOG_NOTICE("OBJ = ~p~n", [Obj]),
     gen_server:cast(riak_process, {update, Bucket, Key, <<"Gimbab">>}),
     Obj2 = gen_server:call(riak_process, {read, Bucket, Key}),
-    ?LOG_NOTICE("OBJ2 = ~p~n", [Obj2]),
+    %?LOG_NOTICE("OBJ2 = ~p~n", [Obj2]),
 
     %% http server 설정
     {ok, _Pid} =
