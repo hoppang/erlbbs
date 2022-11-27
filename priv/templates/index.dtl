@@ -20,5 +20,11 @@
     </ul>
 
     <hr/>
+    Posts:
+    <ul>
+      {% for post in posts %}
+      <li>{{ post }}</li>
+      {% endfor %}
+    </ul>
   </body>
 </html>

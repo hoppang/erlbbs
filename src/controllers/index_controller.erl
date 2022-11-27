@@ -9,10 +9,10 @@ init(Req0, State) ->
     ?LOG_INFO("INDEX INIT ~p", State),
 
     % 유저 ID 목록 출력(그냥 보여주기용)
-    Users = riak_process:get_all_user_ids(),
-    UsersWithDelim = lists:map(fun(X) -> <<X/binary, <<" ">>/binary>> end, Users),
+    Users = riak_process:get_all_users_id(),
+    Posts = riak_process:get_all_posts_title(),
 
-    {ok, Body} = index_view:render([{users, Users}]),
+    {ok, Body} = index_view:render([{users, Users}, {posts, Posts}]),
     Req1 = cowboy_req:reply(200, #{<<"content-type">> => <<"text/html">>}, Body, Req0),
 
     {ok, Req1, State}.

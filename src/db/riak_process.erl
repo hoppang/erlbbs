@@ -8,7 +8,7 @@
 % gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2]).
 % 인터페이스
--export([add_user/2, get_all_user_ids/0]).
+-export([add_user/2, get_all_users_id/0, get_all_posts_title/0, new_post/2]).
 
 -record(state, {pid}).
 
@@ -39,14 +39,18 @@ add_user(Id, Pw) ->
     gen_server:cast(riak_process, {new, <<"Users">>, Id, Pw}),
     ok.
 
--spec get_all_user_ids() -> [binary()].
-get_all_user_ids() ->
+-spec get_all_users_id() -> [binary()].
+get_all_users_id() ->
     gen_server:call(riak_process, {read_all, <<"Users">>}).
 
 -spec new_post(binary(), binary()) -> ok.
 new_post(Content, Title) ->
     gen_server:cast(riak_process, {new, <<"Posts">>, Title, Content}),
     ok.
+
+-spec get_all_posts_title() -> [binary()].
+get_all_posts_title() ->
+    gen_server:call(riak_process, {read_all, <<"Posts">>}).
 
 %% ================================================================================
 
