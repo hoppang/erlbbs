@@ -13,11 +13,11 @@ permissions:
 
 jobs:
   build:
-    runs-on: [self-hosted, macOS]
+    runs-on: [self-hosted, Linux]
 
     # macos에서는 github actions에 docker를 쓸 수 없음
-    #container:
-    #  image: erlang:latest
+    container:
+      image: erlang:latest
 
     steps:
     - uses: actions/checkout@v3
