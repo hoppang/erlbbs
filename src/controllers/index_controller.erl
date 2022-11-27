@@ -9,7 +9,7 @@ init(Req0, State) ->
     ?LOG_INFO("INDEX INIT ~p", State),
 
     % 유저 ID 목록 출력(그냥 보여주기용)
-    Users = riak_process:get_all_users(),
+    Users = riak_process:get_all_user_ids(),
     UsersWithDelim = lists:map(fun(X) -> <<X/binary, <<" ">>/binary>> end, Users),
 
     {ok, Body} = index_view:render([{users, list_to_binary(UsersWithDelim)}]),
