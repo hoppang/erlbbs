@@ -10,8 +10,15 @@
     </form>
 
     <a href="/new_post">새글</a>
+    <hr/>
 
     ID List:
-    {{ users }}
+    <ul>
+      {% for user in users %}
+      <li>{{ user }}</li>
+      {% endfor %}
+    </ul>
+
+    <hr/>
   </body>
 </html>

@@ -12,7 +12,7 @@ init(Req0, State) ->
     Users = riak_process:get_all_user_ids(),
     UsersWithDelim = lists:map(fun(X) -> <<X/binary, <<" ">>/binary>> end, Users),
 
-    {ok, Body} = index_view:render([{users, list_to_binary(UsersWithDelim)}]),
+    {ok, Body} = index_view:render([{users, Users}]),
     Req1 = cowboy_req:reply(200, #{<<"content-type">> => <<"text/html">>}, Body, Req0),
 
     {ok, Req1, State}.
