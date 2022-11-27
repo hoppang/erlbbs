@@ -21,5 +21,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: Dialyzer
+      run: rebar3 dialyzer
     - name: Run tests
       run: rebar3 do eunit, ct
