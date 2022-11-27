@@ -9,6 +9,8 @@
       <input type="submit"></input>
     </form>
 
+    <a href="/new_post">새글</a>
+
     ID List:
     {{ users }}
   </body>
