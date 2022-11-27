@@ -43,6 +43,11 @@ add_user(Id, Pw) ->
 get_all_users() ->
     gen_server:call(riak_process, {read_all, <<"Users">>}).
 
+-spec new_post(binary(), binary()) -> ok.
+new_post(Content, Title) ->
+    gen_server:cast(riak_process, {new, <<"Posts">>, Title, Content}),
+    ok.
+
 %% ================================================================================
 
 %% 버킷에서 항목 하나 읽기
