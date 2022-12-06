@@ -1,12 +1,14 @@
-# self-host macos 용
+# self-host 용
 
-name: erlbbs CI
+name: erlbbs dialyzer/unittest
 
 on:
   push:
     branches: [ "main" ]
+    paths: '**.erl'
   pull_request:
     branches: [ "main" ]
+    paths: '**.erl'
 
 permissions:
   contents: read
