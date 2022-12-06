@@ -8,6 +8,16 @@ Build
 
     $ rebar3 compile
 
+Dialyzer check
+-----
+
+    $ rebar3 dialyzer
+
+Unit test(not implemented yet)
+-----
+
+    $ rebar3 do eunit, ct
+
 Run local server
 -----
 
