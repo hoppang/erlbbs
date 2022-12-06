@@ -35,7 +35,10 @@ add_user(Username, Password) ->
 
 -spec create_table(atom(), atom(), [atom()]) -> ok.
 create_table(TableName, RecordName, RecordInfo) ->
-    case mnesia:create_table(TableName, [{record_name, RecordName}, {attributes, RecordInfo}])
+    case mnesia:create_table(TableName,
+                             [{record_name, RecordName},
+                              {attributes, RecordInfo},
+                              {disc_copies, [node()]}])
     of
         {atomic, ok} ->
             ?LOG_NOTICE("Create table ~p (record_name: ~p) OK", [TableName, RecordName]);
