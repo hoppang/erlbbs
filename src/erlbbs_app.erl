@@ -18,7 +18,8 @@ start(_StartType, _StartArgs) ->
     Dispatch =
         cowboy_router:compile([{'_',
                                 [{"/", index_controller, []},
-                                 {"/register", register_controller, []}]}]),
+                                 {"/register", register_controller, []},
+                                 {"/new_article", new_article_controller, []}]}]),
     ListeningPort = 60000,
 
     db:init(),

@@ -9,7 +9,22 @@
       <input type="submit"></input>
     </form>
 
+    <a href="/new_article">새글</a>
+    <hr/>
+
     ID List:
-    {{ users }}
+    <ul>
+      {% for user in users %}
+      <li>{{ user }}</li>
+      {% endfor %}
+    </ul>
+
+    <hr/>
+    Articles:
+    <ul>
+      {% for article in articles %}
+      <li>{{ article }}</li>
+      {% endfor %}
+    </ul>
   </body>
 </html>

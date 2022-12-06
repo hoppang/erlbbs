@@ -4,7 +4,8 @@
 -include_lib("kernel/include/logger.hrl").
 -include_lib("stdlib/include/qlc.hrl").
 
--export([init/0, add_user/2, select_all_users/0, select_user/1]).
+-export([init/0, add_user/2, add_article/2]).
+-export([select_all_articles/0, select_all_users/0, select_user/1]).
 
 -record(user, {id, username, password}).
 -record(article, {id, title, content}).
@@ -31,6 +32,38 @@ add_user(Username, Password) ->
           end,
     {atomic, ok} = mnesia:transaction(Fun).
 
+-spec add_article(bitstring(), bitstring()) -> {atomic, ok}.
+add_article(Title, Content) ->
+    Fun = fun() ->
+             mnesia:write(articles,
+                          #article{id = erlang:unique_integer(),
+                                   title = Title,
+                                   content = Content},
+                          write)
+          end,
+    {atomic, ok} = mnesia:transaction(Fun).
+
+%% @doc 모든 유저 정보를 select
+-spec select_all_users() -> [{user, integer(), bitstring(), bitstring()}].
+select_all_users() ->
+    do_query(qlc:q([X || X <- mnesia:table(users)])).
+
+%% @doc 주어진 이름을 가진 유저를 select
+-spec select_user(integer() | bitstring()) ->
+                     [{user, integer(), bitstring(), bitstring()}].
+% ID
+select_user(Id) when is_integer(Id) ->
+    ?LOG_DEBUG("Select user by ID: ~p", [Id]),
+    do_query(qlc:q([X || X <- mnesia:table(users), X#user.id == Id]));
+% 유저 이름(bitstring)
+select_user(Username) ->
+    ?LOG_DEBUG("Select user by username: ~p", [Username]),
+    do_query(qlc:q([X || X <- mnesia:table(users), X#user.username == Username])).
+
+-spec select_all_articles() -> [{article, integer(), bitstring(), bitstring()}].
+select_all_articles() ->
+    do_query(qlc:q([X || X <- mnesia:table(articles)])).
+
 % ================================================================================
 
 -spec create_table(atom(), atom(), [atom()]) -> ok.
@@ -50,23 +83,6 @@ create_table(TableName, RecordName, RecordInfo) ->
             throw("Failed to create mnesia table")
     end,
     ok.
-
-%% @doc 모든 유저 정보를 select
--spec select_all_users() -> [{user, integer(), bitstring(), bitstring()}].
-select_all_users() ->
-    do_query(qlc:q([X || X <- mnesia:table(users)])).
-
-%% @doc 주어진 이름을 가진 유저를 select
--spec select_user(integer() | bitstring()) ->
-                     [{user, integer(), bitstring(), bitstring()}].
-% ID
-select_user(Id) when is_integer(Id) ->
-    ?LOG_DEBUG("Select user by ID: ~p", [Id]),
-    do_query(qlc:q([X || X <- mnesia:table(users), X#user.id == Id]));
-% 유저 이름(bitstring)
-select_user(Username) ->
-    ?LOG_DEBUG("Select user by username: ~p", [Username]),
-    do_query(qlc:q([X || X <- mnesia:table(users), X#user.username == Username])).
 
 -spec do_query(qlc:query_handle()) -> any().
 do_query(Query) ->
