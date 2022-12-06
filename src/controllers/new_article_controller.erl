@@ -1,4 +1,4 @@
--module(new_post_controller).
+-module(new_article_controller).
 
 %% protocols
 -export([init/2, terminate/3]).
@@ -15,7 +15,7 @@ init(Req, State) ->
         <<"POST">> ->
             {cowboy_rest, Req, State};
         <<"GET">> ->
-            {ok, Body} = new_post_view:render([]),
+            {ok, Body} = new_article_view:render([]),
             Req1 = cowboy_req:reply(200, #{<<"content-type">> => <<"text/html">>}, Body, Req),
             {ok, Req1, State}
     end.
@@ -39,7 +39,7 @@ handle_post(Req, State) ->
     {ok, Body, _Req} = cowboy_req:read_urlencoded_body(Req),
     {_TitleKey, Title} = lists:keyfind(<<"title">>, 1, Body),
     {_ContentKey, Content} = lists:keyfind(<<"content">>, 1, Body),
-    ?LOG_INFO("New post success? ~p ~p", [Title, Content]),
+    ?LOG_INFO("New article success? ~p ~p", [Title, Content]),
     db:add_article(Title, Content),
     % 작업 완료 후 /register 로 리디렉션
     {{true, <<"/">>}, Req, State}.

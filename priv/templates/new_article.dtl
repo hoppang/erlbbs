@@ -7,7 +7,7 @@
     <hr/>
     새 글 작성
 
-    <form action="/new_post" method="post">
+    <form action="/new_article" method="post">
       제목: <input type="text" name="title" required></input>
       <br/>
       본문: <textarea type="text" cols="60" rows="40" name="content" required></textarea>

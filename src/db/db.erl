@@ -4,8 +4,8 @@
 -include_lib("kernel/include/logger.hrl").
 -include_lib("stdlib/include/qlc.hrl").
 
--export([init/0, add_user/2, add_article/2, select_all_articles/0, select_all_users/0,
-         select_user/1]).
+-export([init/0, add_user/2, add_article/2]).
+-export([select_all_articles/0, select_all_users/0, select_user/1]).
 
 -record(user, {id, username, password}).
 -record(article, {id, title, content}).
