@@ -15,4 +15,4 @@ deps
 .rebar3
 _build/
 _checkouts/
-config/secret.config
+Mnesia.nonode@nohost

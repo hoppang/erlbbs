@@ -21,16 +21,14 @@ start(_StartType, _StartArgs) ->
                                  {"/register", register_controller, []}]}]),
     ListeningPort = 60000,
 
-    {ok, DbAddr} = application:get_env(db, address),
-    {ok, DbPort} = application:get_env(db, port),
-
-    riak_process:start_link(DbAddr, DbPort),
+    db:init(),
 
     %% http server 설정
     {ok, _Pid} =
         cowboy:start_clear(http, [{port, ListeningPort}], #{env => #{dispatch => Dispatch}}),
 
-    ?LOG_NOTICE("Init OK: Now you can access index page via http://127.0.0.1:~p", [ListeningPort]),
+    ?LOG_NOTICE("Init OK: Now you can access index page via http://127.0.0.1:~p",
+                [ListeningPort]),
 
     erlbbs_sup:start_link().
 
