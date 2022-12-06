@@ -20,10 +20,10 @@
     </ul>
 
     <hr/>
-    Posts:
+    Articles:
     <ul>
-      {% for post in posts %}
-      <li>{{ post }}</li>
+      {% for article in articles %}
+      <li>{{ article }}</li>
       {% endfor %}
     </ul>
   </body>

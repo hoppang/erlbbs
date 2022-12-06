@@ -40,6 +40,6 @@ handle_post(Req, State) ->
     {_TitleKey, Title} = lists:keyfind(<<"title">>, 1, Body),
     {_ContentKey, Content} = lists:keyfind(<<"content">>, 1, Body),
     ?LOG_INFO("New post success? ~p ~p", [Title, Content]),
-    riak_process:new_post(Title, Content),
+    db:add_article(Title, Content),
     % 작업 완료 후 /register 로 리디렉션
     {{true, <<"/">>}, Req, State}.
