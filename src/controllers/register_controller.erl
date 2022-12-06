@@ -39,6 +39,6 @@ handle_post(Req, State) ->
     {ok, Body, _Req} = cowboy_req:read_urlencoded_body(Req),
     {_IdKey, Id} = lists:keyfind(<<"register_id">>, 1, Body),
     {_PwKey, Pw} = lists:keyfind(<<"register_pw">>, 1, Body),
-    riak_process:add_user(Id, Pw),
+    db:add_user(Id, Pw),
     % 작업 완료 후 /register 로 리디렉션
     {{true, <<"/register">>}, Req, State}.
