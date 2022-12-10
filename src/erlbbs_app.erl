@@ -19,7 +19,8 @@ start(_StartType, _StartArgs) ->
         cowboy_router:compile([{'_',
                                 [{"/", index_controller, []},
                                  {"/register", register_controller, []},
-                                 {"/article/new", new_article_controller, []}]}]),
+                                 {"/article/new", new_article_controller, []},
+                                 {"/article/view", view_article_controller, []}]}]),
     ListeningPort = 60000,
 
     db:init(),
