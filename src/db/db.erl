@@ -81,7 +81,7 @@ select_all_articles_metadata() ->
 
 -spec read_article(any()) -> {article, integer(), bitstring(), bitstring()}.
 read_article(Id) when is_integer(Id) ->
-    ?LOG_NOTICE("SELECT ARTICLE BY ID: ~p", [Id]),
+    ?LOG_INFO("SELECT ARTICLE BY ID: ~p", [Id]),
     case do_query(qlc:q([X || X <- mnesia:table(articles), X#article.id == Id])) of
         [] ->
             #article{id = -1,
