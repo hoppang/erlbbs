@@ -12,8 +12,7 @@ init(Req0, State) ->
     UserIds =
         lists:map(fun({user, _Id, Username, _Password}) -> Username end, db:select_all_users()),
     % 글 제목 목록 출력(동일)
-    Articles =
-        lists:map(fun({article, _Id, Title, _Content}) -> Title end, db:select_all_articles()),
+    Articles = db:select_all_articles_metadata(),
 
     {ok, Body} = index_view:render([{users, UserIds}, {articles, Articles}]),
     Req1 = cowboy_req:reply(200, #{<<"content-type">> => <<"text/html">>}, Body, Req0),

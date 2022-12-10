@@ -23,7 +23,7 @@
     Articles:
     <ul>
       {% for article in articles %}
-      <li>{{ article }}</li>
+      <li>{{ article.id }} - {{ article.title }}</li>
       {% endfor %}
     </ul>
   </body>

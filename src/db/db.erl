@@ -5,10 +5,13 @@
 -include_lib("stdlib/include/qlc.hrl").
 
 -export([init/0, add_user/2, add_article/2]).
--export([select_all_articles/0, select_all_users/0, select_user/1]).
+-export([select_all_articles/0, select_all_articles_metadata/0, select_all_users/0,
+         select_user/1]).
 
 -record(user, {id, username, password}).
 -record(article, {id, title, content}).
+
+%-record(article_metadata, {id, title}).
 
 init() ->
     ?LOG_NOTICE("Start mnesia db process"),
@@ -63,6 +66,11 @@ select_user(Username) ->
 -spec select_all_articles() -> [{article, integer(), bitstring(), bitstring()}].
 select_all_articles() ->
     do_query(qlc:q([X || X <- mnesia:table(articles)])).
+
+-spec select_all_articles_metadata() -> [[{atom, integer() | bitstring()}]].
+select_all_articles_metadata() ->
+    do_query(qlc:q([[{id, Id}, {title, Title}]
+                    || {article, Id, Title, _Content} <- mnesia:table(articles)])).
 
 % ================================================================================
 
