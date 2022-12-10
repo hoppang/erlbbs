@@ -4,9 +4,10 @@
 -include_lib("kernel/include/logger.hrl").
 -include_lib("stdlib/include/qlc.hrl").
 
--export([init/0, add_user/2, add_article/2]).
--export([select_all_articles/0, select_all_articles_metadata/0, select_all_users/0,
-         select_user/1]).
+-export([init/0]).
+-export([select_all_users/0, select_user/1]).
+-export([select_all_articles/0, select_all_articles_metadata/0, add_user/2, add_article/2,
+         read_article/1]).
 
 -record(user, {id, username, password}).
 -record(article, {id, title, content}).
@@ -24,6 +25,9 @@ init() ->
     mnesia:wait_for_tables([users, articles], 10000),
     ok.
 
+% ================================================================================
+% users
+
 -spec add_user(bitstring(), bitstring()) -> {atomic, ok}.
 add_user(Username, Password) ->
     Fun = fun() ->
@@ -31,17 +35,6 @@ add_user(Username, Password) ->
                           #user{id = erlang:unique_integer(),
                                 username = Username,
                                 password = Password},
-                          write)
-          end,
-    {atomic, ok} = mnesia:transaction(Fun).
-
--spec add_article(bitstring(), bitstring()) -> {atomic, ok}.
-add_article(Title, Content) ->
-    Fun = fun() ->
-             mnesia:write(articles,
-                          #article{id = erlang:unique_integer(),
-                                   title = Title,
-                                   content = Content},
                           write)
           end,
     {atomic, ok} = mnesia:transaction(Fun).
@@ -56,12 +49,26 @@ select_all_users() ->
                      [{user, integer(), bitstring(), bitstring()}].
 % ID
 select_user(Id) when is_integer(Id) ->
-    ?LOG_DEBUG("Select user by ID: ~p", [Id]),
+    ?LOG_NOTICE("Select user by ID: ~p", [Id]),
     do_query(qlc:q([X || X <- mnesia:table(users), X#user.id == Id]));
 % 유저 이름(bitstring)
 select_user(Username) ->
     ?LOG_DEBUG("Select user by username: ~p", [Username]),
     do_query(qlc:q([X || X <- mnesia:table(users), X#user.username == Username])).
+
+% ================================================================================
+% articles
+
+-spec add_article(bitstring(), bitstring()) -> {atomic, ok}.
+add_article(Title, Content) ->
+    Fun = fun() ->
+             mnesia:write(articles,
+                          #article{id = erlang:unique_integer(),
+                                   title = Title,
+                                   content = Content},
+                          write)
+          end,
+    {atomic, ok} = mnesia:transaction(Fun).
 
 -spec select_all_articles() -> [{article, integer(), bitstring(), bitstring()}].
 select_all_articles() ->
@@ -72,7 +79,22 @@ select_all_articles_metadata() ->
     do_query(qlc:q([[{id, Id}, {title, Title}]
                     || {article, Id, Title, _Content} <- mnesia:table(articles)])).
 
+-spec read_article(any()) -> {article, integer(), bitstring(), bitstring()}.
+read_article(Id) when is_integer(Id) ->
+    ?LOG_NOTICE("SELECT ARTICLE BY ID: ~p", [Id]),
+    case do_query(qlc:q([X || X <- mnesia:table(articles), X#article.id == Id])) of
+        [] ->
+            #article{id = -1,
+                     title = <<"Not found">>,
+                     content = <<"">>};
+        [Article] ->
+            Article
+    end;
+read_article(_Id) ->
+    #article{id = -1, title = <<"Invalid ID">>, content = <<"">>}.
+
 % ================================================================================
+% private functions
 
 -spec create_table(atom(), atom(), [atom()]) -> ok.
 create_table(TableName, RecordName, RecordInfo) ->

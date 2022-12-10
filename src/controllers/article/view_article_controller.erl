@@ -9,7 +9,12 @@
 init(Req, State) ->
     ?LOG_INFO("VIEW ARTICLE INIT ~p", [Req]),
 
-    {ok, Body} = view_article_view:render([]),
+    #{id := Id} = cowboy_req:match_qs([id], Req),
+    IdNum = util:bitstring_to_integer(Id),
+
+    {article, _Id, Title, Content} = db:read_article(IdNum),
+
+    {ok, Body} = view_article_view:render([{id, IdNum}, {title, Title}, {content, Content}]),
     Req1 = cowboy_req:reply(200, #{<<"content-type">> => <<"text/html">>}, Body, Req),
 
     {ok, Req1, State}.

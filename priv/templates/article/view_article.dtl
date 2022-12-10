@@ -5,5 +5,10 @@
   <body>
     <a href="/">Top</a>
     글보기
+    {{ id }}
+    <hr/>
+    {{ title }}
+    <hr/>
+    {{ content }}
   </body>
 </html>
