@@ -9,7 +9,7 @@
       <input type="submit"></input>
     </form>
 
-    <a href="/new_article">새글</a>
+    <a href="/article/new">새글</a>
     <hr/>
 
     ID List:
@@ -23,7 +23,7 @@
     Articles:
     <ul>
       {% for article in articles %}
-      <li>{{ article }}</li>
+      <li><a href="/article/view?id={{ article.id }}">{{ article.title }}</a></li>
       {% endfor %}
     </ul>
   </body>
