@@ -9,7 +9,7 @@
       <input type="submit"></input>
     </form>
 
-    <a href="/new_article">새글</a>
+    <a href="/article/new">새글</a>
     <hr/>
 
     ID List:
