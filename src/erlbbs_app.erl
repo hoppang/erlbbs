@@ -24,6 +24,7 @@ start(_StartType, _StartArgs) ->
     ListeningPort = 60000,
 
     db:init(),
+    session:start_link(),
 
     %% http server 설정
     {ok, _Pid} =
